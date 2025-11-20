@@ -1,12 +1,18 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+// On définit les routes protégées (tout sauf la racine)
+// Si tu veux que la racine "/" soit publique, ne la mets pas dans protect()
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)", // Exemple : protège tout ce qui commence par /dashboard (si tu avais cette route)
+]);
+
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) auth().protect();
+});
 
 export const config = {
   matcher: [
-    // Exclure les fichiers internes de Next.js et les fichiers statiques
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Toujours exécuter pour les routes API
     "/(api|trpc)(.*)",
   ],
 };
