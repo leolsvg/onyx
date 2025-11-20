@@ -1,9 +1,11 @@
 import { ClerkProvider, SignIn, SignedIn, SignedOut } from "@clerk/nextjs";
+import type { Metadata } from "next"; // <--- C'est cette ligne qui manquait
 import "./globals.css";
 
+// Configuration du titre et du référencement
 export const metadata: Metadata = {
-  title: "Onyx | Wealth Management", // <--- ICI
-  description: "Gérez votre patrimoine avec précision.",
+  title: "Onyx | Wealth Management",
+  description: "Gérez votre patrimoine avec précision et sérénité.",
 };
 
 export default function RootLayout({
