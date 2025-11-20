@@ -1,6 +1,11 @@
 import { ClerkProvider, SignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 import "./globals.css";
 
+export const metadata: Metadata = {
+  title: "Onyx | Wealth Management", // <--- ICI
+  description: "Gérez votre patrimoine avec précision.",
+};
+
 export default function RootLayout({
   children,
 }: {

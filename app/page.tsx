@@ -1,11 +1,12 @@
 "use client";
 
-import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import {
   ArrowRightLeft,
   FileText,
   LayoutDashboard,
   Loader2,
+  Menu,
   TrendingUp,
   Wallet,
 } from "lucide-react";
@@ -344,11 +345,12 @@ export default function FinaryKillerApp() {
               } bg-[#0f1219] border-r border-gray-800 transition-all hidden md:flex flex-col fixed h-full z-50`}
             >
               <div className="p-6 font-bold text-xl flex items-center gap-3 text-white">
-                <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                  F
+                {/* Logo Onyx */}
+                <div className="w-8 h-8 bg-gradient-to-br from-gray-700 via-gray-900 to-black border border-gray-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                  <span className="font-serif text-gray-200">O</span>
                 </div>
                 {sidebarOpen && (
-                  <span className="tracking-tight">FinaryKiller</span>
+                  <span className="tracking-tight font-medium">Onyx</span>
                 )}
               </div>
               <nav className="flex-1 px-4 space-y-2 mt-6">
@@ -376,13 +378,16 @@ export default function FinaryKillerApp() {
                   </button>
                 ))}
               </nav>
-              <div className="p-4 border-t border-gray-800 flex items-center gap-3 justify-center">
-                <UserButton afterSignOutUrl="/" />
-                {sidebarOpen && (
-                  <span className="text-sm font-bold truncate">
-                    {user?.firstName || "Investisseur"}
-                  </span>
-                )}
+              <div className="md:hidden fixed top-0 w-full bg-[#0f1219] border-b border-gray-800 z-50 p-4 flex justify-between items-center">
+                <div className="font-bold flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gray-800 rounded flex items-center justify-center border border-gray-700">
+                    O
+                  </div>
+                  Onyx
+                </div>
+                <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+                  <Menu />
+                </button>
               </div>
             </aside>
 

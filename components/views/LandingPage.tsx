@@ -15,10 +15,11 @@ export default function LandingPage() {
       {/* NAVBAR */}
       <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between border-b border-gray-800/50">
         <div className="flex items-center gap-2 font-bold text-xl">
-          <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-            F
+          {/* Nouveau Logo "O" Onyx */}
+          <div className="w-8 h-8 bg-gradient-to-br from-gray-800 via-black to-gray-900 border border-gray-700 rounded-lg flex items-center justify-center shadow-lg">
+            <span className="text-white font-serif">O</span>
           </div>
-          <span className="tracking-tight">FinaryKiller</span>
+          <span className="tracking-tight text-white">Onyx</span>
         </div>
         <div className="flex gap-4">
           <SignInButton mode="modal">

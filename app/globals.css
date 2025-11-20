@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Un noir légèrement bleuté très profond, plus "Onyx" que le noir pur */
+  --background-start-rgb: 5, 5, 10; 
+  --background-end-rgb: 0, 0, 0;
 }
 
 @theme inline {

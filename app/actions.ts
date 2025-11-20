@@ -7,7 +7,9 @@ const prisma = new PrismaClient();
 
 // --- 1. RÉCUPÉRER TOUTES LES DONNÉES ---
 export async function getUserData() {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
+
   if (!userId) return null;
 
   const envelopes = await prisma.envelope.findMany({ where: { userId } });
@@ -33,7 +35,8 @@ export async function addEnvelopeAction(
   type: string,
   yieldRate: number
 ) {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   return await prisma.envelope.create({
@@ -42,7 +45,8 @@ export async function addEnvelopeAction(
 }
 
 export async function addAssetAction(data: any) {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   return await prisma.asset.create({
@@ -51,7 +55,8 @@ export async function addAssetAction(data: any) {
 }
 
 export async function addLiabilityAction(data: any) {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   return await prisma.liability.create({
@@ -65,7 +70,8 @@ export async function addFlowAction(
   amount: number,
   group: string
 ) {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   return await prisma.flowItem.create({
@@ -78,7 +84,8 @@ export async function addObjectiveAction(
   targetAmount: number,
   linkedIds: string[]
 ) {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   return await prisma.objective.create({
@@ -91,11 +98,12 @@ export async function deleteItemAction(
   table: "asset" | "envelope" | "liability" | "flowItem" | "objective",
   id: string
 ) {
-  const { userId } = auth();
+  // CORRECTION ICI : ajout de 'await'
+  const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   // @ts-ignore - Prisma dynamic mapping hack for brevity
   return await prisma[table].delete({
-    where: { id, userId }, // Sécurité : on vérifie que l'item appartient bien au user
+    where: { id, userId },
   });
 }
