@@ -1,3 +1,5 @@
+"use client";
+
 import { Card } from "@/components/ui/Card";
 import { FlowItem, Liability } from "@/lib/types";
 import { FolderOpen, Plus, Trash2 } from "lucide-react";
@@ -10,6 +12,9 @@ interface Props {
   expenses: FlowItem[];
   setExpenses: (items: FlowItem[]) => void;
   liabilities: Liability[];
+  // CORRECTION ICI : On ajoute les définitions manquantes
+  addIncomeParent: (item: FlowItem) => void;
+  addExpenseParent: (item: FlowItem) => void;
 }
 
 export default function CashflowView({
@@ -18,6 +23,8 @@ export default function CashflowView({
   expenses,
   setExpenses,
   liabilities,
+  addIncomeParent,
+  addExpenseParent,
 }: Props) {
   // Local Inputs
   const [newIncomeName, setNewIncomeName] = useState("");
@@ -26,36 +33,38 @@ export default function CashflowView({
   const [newExpenseAmount, setNewExpenseAmount] = useState("");
   const [newExpenseGroup, setNewExpenseGroup] = useState("Logement");
 
-  const addIncome = () => {
+  // Gestionnaires d'ajout qui utilisent les fonctions du Parent (page.tsx)
+  const handleAddIncome = () => {
     if (!newIncomeName || !newIncomeAmount) return;
-    setIncomes([
-      ...incomes,
-      {
-        id: Date.now().toString(),
-        name: newIncomeName,
-        amount: parseFloat(newIncomeAmount),
-        group: "Revenus",
-      },
-    ]);
+
+    const newItem: FlowItem = {
+      id: Date.now().toString(),
+      name: newIncomeName,
+      amount: parseFloat(newIncomeAmount),
+      group: "Revenus",
+    };
+
+    addIncomeParent(newItem); // Appel au parent pour sauvegarde BDD
     setNewIncomeName("");
     setNewIncomeAmount("");
   };
-  const addExpense = () => {
+
+  const handleAddExpense = () => {
     if (!newExpenseName || !newExpenseAmount || !newExpenseGroup) return;
-    setExpenses([
-      ...expenses,
-      {
-        id: Date.now().toString(),
-        name: newExpenseName,
-        amount: parseFloat(newExpenseAmount),
-        group: newExpenseGroup,
-      },
-    ]);
+
+    const newItem: FlowItem = {
+      id: Date.now().toString(),
+      name: newExpenseName,
+      amount: parseFloat(newExpenseAmount),
+      group: newExpenseGroup,
+    };
+
+    addExpenseParent(newItem); // Appel au parent pour sauvegarde BDD
     setNewExpenseName("");
     setNewExpenseAmount("");
   };
 
-  // Sankey Logic
+  // --- CALCULS SANKEY ---
   const expenseGroups = Array.from(new Set(expenses.map((e) => e.group)));
   const incomeNodes = incomes.map((i) => ({ name: i.name }));
   const totalNode = { name: "Revenus Totaux" };
@@ -80,32 +89,43 @@ export default function CashflowView({
   );
 
   const links: any[] = [];
-  incomes.forEach((inc, idx) =>
-    links.push({ source: idx, target: incomes.length, value: inc.amount })
-  );
+
+  // Revenus -> Hub
+  incomes.forEach((inc, idx) => {
+    links.push({ source: idx, target: incomes.length, value: inc.amount });
+  });
+
+  // Hub -> Dépenses par groupe
   expenseGroups.forEach((grp, idx) => {
     const grpAmount = expenses
       .filter((e) => e.group === grp)
       .reduce((a, b) => a + b.amount, 0);
-    if (grpAmount > 0)
+    if (grpAmount > 0) {
       links.push({
         source: incomes.length,
         target: incomes.length + 1 + idx,
         value: grpAmount,
       });
+    }
   });
-  if (totalDebtVal > 0)
+
+  // Hub -> Dettes
+  if (totalDebtVal > 0) {
     links.push({
       source: incomes.length,
       target: nodes.length - 2,
       value: totalDebtVal,
     });
-  if (savingsVal > 0)
+  }
+
+  // Hub -> Epargne
+  if (savingsVal > 0) {
     links.push({
       source: incomes.length,
       target: nodes.length - 1,
       value: savingsVal,
     });
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -131,7 +151,7 @@ export default function CashflowView({
               onChange={(e) => setNewIncomeAmount(e.target.value)}
             />
             <button
-              onClick={addIncome}
+              onClick={handleAddIncome}
               className="bg-green-600 text-white rounded px-3"
             >
               <Plus size={16} />
@@ -143,8 +163,17 @@ export default function CashflowView({
                 key={i.id}
                 className="flex justify-between text-sm border-b border-gray-800 pb-1"
               >
-                <span>{i.name}</span>{" "}
-                <span className="font-bold text-green-400">+{i.amount}€</span>
+                <span>{i.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-green-400">+{i.amount}€</span>
+                  <button
+                    onClick={() =>
+                      setIncomes(incomes.filter((x) => x.id !== i.id))
+                    }
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -179,7 +208,7 @@ export default function CashflowView({
                 onChange={(e) => setNewExpenseAmount(e.target.value)}
               />
               <button
-                onClick={addExpense}
+                onClick={handleAddExpense}
                 className="bg-red-600 text-white rounded px-3"
               >
                 <Plus size={16} />
@@ -226,7 +255,7 @@ export default function CashflowView({
         <Card className="md:col-span-1 flex flex-col justify-center bg-blue-900/10 border-blue-500/30">
           <div className="text-center">
             <div className="text-xs uppercase text-gray-400 mb-1">
-              Capacité d'épargne
+              Capacité d&apos;épargne
             </div>
             <div className="text-3xl font-bold text-blue-400">
               {savingsVal.toLocaleString()} €
