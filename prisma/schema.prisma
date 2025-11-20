@@ -1,0 +1,70 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // Utilise le Pooler (Rapide)
+  directUrl = env("DIRECT_URL")   // Utilise la connexion directe (Migrations)
+}
+
+model UserSettings {
+  id        String   @id @default(uuid())
+  userId    String   @unique // L'ID venant de Clerk
+  createdAt DateTime @default(now())
+}
+
+model Envelope {
+  id        String   @id @default(uuid())
+  userId    String   // Important : Pour lier à l'utilisateur
+  name      String
+  type      String   // PEA, CTO...
+  yield     Float    @default(0)
+  createdAt DateTime @default(now())
+  assets    Asset[]
+}
+
+model Asset {
+  id         String   @id @default(uuid())
+  userId     String
+  envelopeId String
+  envelope   Envelope @relation(fields: [envelopeId], references: [id], onDelete: Cascade)
+  name       String
+  category   String
+  amount     Float
+  buyPrice   Float
+  unitPrice  Float
+  createdAt  DateTime @default(now())
+}
+
+model Liability {
+  id              String   @id @default(uuid())
+  userId          String
+  name            String
+  amountRemaining Float
+  monthlyPayment  Float
+  rate            Float
+  endDate         String
+  createdAt       DateTime @default(now())
+}
+
+model FlowItem {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // "income" ou "expense"
+  name      String
+  amount    Float
+  group     String?
+  createdAt DateTime @default(now())
+}
+
+model Objective {
+  id           String   @id @default(uuid())
+  userId       String
+  name         String
+  targetAmount Float
+  linkedIds    String[] // IDs des assets/enveloppes liés
+  createdAt    DateTime @default(now())
+}
