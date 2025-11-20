@@ -45,10 +45,11 @@ export type FlowItem = {
 
 export type AuditLog = {
   id: string;
-  type: "success" | "warning" | "danger";
+  // CORRECTION ICI : Ajout de "info" dans la liste des types autorisés
+  type: "success" | "warning" | "danger" | "info";
   title: string;
   message: string;
-  impact: number; // Impact sur le score (ex: -5 pts)
+  impact: number;
 };
 
 export type Objective = {
